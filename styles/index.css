@@ -1,0 +1,94 @@
+html {
+    font-size: 16px;
+}
+
+body {
+    background-color: rgb(35, 35, 35);
+    transition: background 0.6s;
+    -webkit-transition: background 0.6s;
+    -moz-transition: background 0.6s;
+}
+
+.container-fuild {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+nav.navbar {
+    padding: 8px 20vw 8px 20vw;
+}
+
+.nav-link {
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.color-picked,
+.message {
+    color: #fff;
+}
+
+.color-picked {
+    font-size: 5vmax;
+}
+
+.message {
+    font-size: 2vmax;
+}
+
+.card-container{
+    display: flex;
+}
+
+.card {
+    width: 10vw;
+    min-width: 100px;
+    height: 10vw;
+    min-height: 100px;
+    margin: 1vw;
+    cursor: pointer;
+    border: none;
+    transition: all 0.6s ease-in-out;
+    -webkit-transition: all 0.6s ease-in-out;
+    -moz-transition: all 0.6s ease-in-out;
+}
+
+.reset {
+    margin-top: 5vw;
+    padding: 1rem;
+    border-radius: 999rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #484848;
+    border: none;
+    transition: all 0.3s;
+}
+
+.reset:focus,
+.reset:active{
+    outline: none;
+}
+
+.reset:hover{
+    background-color: steelblue;
+    color: white;
+
+}
+
+.reset-text {
+    margin-left: 5px;
+}
+
+footer {
+    position: relative;
+    text-align: center;
+    color: white;
+}
