@@ -43,6 +43,10 @@ main {
     font-size: 2vmax;
 }
 
+.countdown{
+    display: none;
+}
+
 .card {
     width: 10vw;
     min-width: 100px;

@@ -23,16 +23,19 @@ class ColorGame {
         this.gameMode = 'easy';
         this.answerColor = '';
         this.colors = [];
-        this.setGameMode();
         
         this.body = document.querySelector('body');
         this.title = document.querySelector('.color-picked');
-        this.message = document.querySelector('.message');
+        this.message = document.querySelector('#message');
         this.cards = document.querySelectorAll('.card');
         this.resetBtn = document.querySelector('.reset');
         this.resetText = document.querySelector('.reset-text');
         this.navItems = document.querySelectorAll('.nav-item');
+        this.countDownText = document.querySelector('#countdown');
+        this.countDownId;
+        this.timeout=5;
 
+        this.setGameMode();
         this.addClickEventToCards();
         this.addClickEventToResetBtn();
         this.addClickEventToNavItmes();
@@ -42,14 +45,33 @@ class ColorGame {
         switch(this.gameMode){
             case 'easy':
                 this.cardNum=3;
+                this.countDownText.style.display = 'none';
                 break;
             case 'hard':
                 this.cardNum=6;
+                this.countDownText.style.display = 'none';
                 break;
             case 'nightmare':
                 this.cardNum=6;
+                this.countDownText.style.display = 'block';
+                this.countDown();
                 break;
         }
+    }
+
+    countDown(){
+        this.timeout = 5;
+        this.countDownText.innerHTML = this.timeout;
+        this.countdownId = setInterval(()=>{
+            this.timeout--;
+            this.countDownText.innerHTML = this.timeout;
+            if(this.timeout===0){
+                if(!this.gameOver){
+                    this.gameOver = true;
+                    this.overGame();
+                }
+            }
+        }, 1000)
     }
 
     setTitle(){
@@ -59,6 +81,8 @@ class ColorGame {
     setMessage(msg){
         if(msg!=undefined) {
             this.message.innerHTML = msg.toUpperCase();
+        } else if(this.gameMode==='nightmare' && this.timeout===0) {
+            this.message.innerHTML = 'TIMEOUT!';
         } else if(this.gameOver){
             this.message.innerHTML = 'CORRECT!';
         } else {
@@ -104,6 +128,14 @@ class ColorGame {
         }
     }
 
+    overGame(){
+        clearInterval(this.countdownId);
+        this.setMessage();
+        this.setColorOfCards();
+        this.setResetText();
+        this.setBodyBgColor();
+    }
+
     checkAnswer(e){
         if(this.gameOver){
             return false;
@@ -111,10 +143,7 @@ class ColorGame {
         if(e.target.style.backgroundColor === this.answerColor){
             // correct
             this.gameOver = true;
-            this.setMessage();
-            this.setColorOfCards();
-            this.setResetText();
-            this.setBodyBgColor();
+            this.overGame();
         } else {
             // try again
             this.setMessage();
@@ -132,15 +161,12 @@ class ColorGame {
 
     addClickEventToResetBtn(){
         this.resetBtn.addEventListener('click', (e)=>{
-            if(this.gameOver){
-                this.reset();
-            } else {
-                this.init();
-            }
+            this.init();
         })
     }
 
     init(){
+        this.gameOver = false;
         this.setGameMode();
         this.colors = getRandomColors(this.cardNum);
         this.answerColor = getAnswerColor(this.colors);
@@ -149,11 +175,6 @@ class ColorGame {
         this.setColorOfCards();
         this.setResetText();
         this.setBodyBgColor();
-    }
-
-    reset(){
-        this.gameOver = false;
-        this.init();
     }
 
     removeActiveClassFromNavItems(){
