@@ -1,20 +1,6 @@
-const getColor = () => {
-    let r = Math.floor(Math.random()*256);
-    let g = Math.floor(Math.random()*256);
-    let b = Math.floor(Math.random()*256);
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-const getRandomColors = (cardNum) => {
-    let colors = [];
-    for(let i=0; i<cardNum; i++){
-        colors.push(getColor())
-    }
-    return colors;
-}
-
-const getAnswerColor = (colors) => {
-    return colors[Math.floor(Math.random()*colors.length)];
+window.onload = () => {
+    let colorGame = new ColorGame();
+    colorGame.init();
 }
 
 class ColorGame {
@@ -23,6 +9,9 @@ class ColorGame {
         this.gameMode = 'easy';
         this.answerColor = '';
         this.colors = [];
+        this.timeout = 5;
+        this.countDownId;
+        this.blinkBgId;
         
         this.body = document.querySelector('body');
         this.title = document.querySelector('.color-picked');
@@ -32,13 +21,63 @@ class ColorGame {
         this.resetText = document.querySelector('.reset-text');
         this.navItems = document.querySelectorAll('.nav-item');
         this.countDownText = document.querySelector('#countdown');
-        this.countDownId;
-        this.timeout=5;
+        this.brand = document.querySelector('.navbar-brand');
 
-        this.setGameMode();
         this.addClickEventToCards();
         this.addClickEventToResetBtn();
         this.addClickEventToNavItmes();
+    }
+
+    init() {
+        this.gameOver = false;
+        this.clearAllTimingEvents();
+        this.setGameMode();
+        this.colors = getRandomColors(this.cardNum);
+        this.answerColor = getAnswerColor(this.colors);
+        this.setTitle();
+        this.setMessage('WHAT\'S THE COLOR?');
+        this.setColorOfCards();
+        this.setResetText();
+        this.setBodyBgColor();
+    }
+
+    overGame(){
+        this.gameOver=true;
+        this.clearAllTimingEvents();
+        this.setMessage();
+        this.setColorOfCards();
+        this.setResetText();
+        this.setBodyBgColor();
+    }
+
+    addClickEventToCards(){
+        this.cards.forEach((card, i)=>{
+            card.addEventListener('click', (e)=>{
+                this.checkAnswer(e);
+            });
+        });
+    }
+
+    addClickEventToResetBtn(){
+        this.resetBtn.addEventListener('click', (e)=>{
+            this.init();
+        });
+    }
+
+    addClickEventToNavItmes(){
+        this.navItems.forEach(item=>{
+            item.addEventListener('click', ()=>{
+                this.removeActiveClassFromNavItems();
+                item.classList.add('active');
+                this.gameMode = item.querySelector('a').innerHTML.toLowerCase();
+                this.init();
+            });
+        })
+    }
+
+    clearAllTimingEvents(){
+        clearInterval(this.countdownId);
+        clearTimeout(this.blinkBgId);
     }
 
     setGameMode(){
@@ -65,9 +104,9 @@ class ColorGame {
         this.countdownId = setInterval(()=>{
             this.timeout--;
             this.countDownText.innerHTML = this.timeout;
+            this.blinkBg();
             if(this.timeout===0){
                 if(!this.gameOver){
-                    this.gameOver = true;
                     this.overGame();
                 }
             }
@@ -128,21 +167,12 @@ class ColorGame {
         }
     }
 
-    overGame(){
-        clearInterval(this.countdownId);
-        this.setMessage();
-        this.setColorOfCards();
-        this.setResetText();
-        this.setBodyBgColor();
-    }
-
     checkAnswer(e){
         if(this.gameOver){
             return false;
         }
         if(e.target.style.backgroundColor === this.answerColor){
             // correct
-            this.gameOver = true;
             this.overGame();
         } else {
             // try again
@@ -151,54 +181,36 @@ class ColorGame {
         }
     }
 
-    addClickEventToCards(){
-        this.cards.forEach((card, i)=>{
-            card.addEventListener('click', (e)=>{
-                this.checkAnswer(e);
-            });
-        });
-    }
-
-    addClickEventToResetBtn(){
-        this.resetBtn.addEventListener('click', (e)=>{
-            this.init();
-        })
-    }
-
-    init(){
-        this.gameOver = false;
-        this.setGameMode();
-        this.colors = getRandomColors(this.cardNum);
-        this.answerColor = getAnswerColor(this.colors);
-        this.setTitle();
-        this.setMessage('WHAT\'S THE COLOR?');
-        this.setColorOfCards();
-        this.setResetText();
-        this.setBodyBgColor();
-    }
-
     removeActiveClassFromNavItems(){
         this.navItems.forEach(item=>{
             item.classList.remove('active');
         });
     }
-    
-    addClickEventToNavItmes(){
-        this.navItems.forEach(item=>{
-            item.addEventListener('click', ()=>{
-                this.removeActiveClassFromNavItems();
-                item.classList.add('active');
-                let selectedMode = item.querySelector('a').innerHTML.toLowerCase();
-                if(selectedMode !== this.gameMode){
-                    this.gameMode = selectedMode;
-                    this.init();
-                }
-            });
-        })
+
+    blinkBg() {
+        this.body.style.backgroundColor = '#fff';
+        this.blinkBgId = setTimeout(()=>{
+            this.body.style.backgroundColor = 'rgb(35, 35, 35)';
+            clearTimeout(this.blinkBgId);
+        }, 100);
     }
 }
 
-window.onload = () => {
-    let colorGame = new ColorGame();
-    colorGame.init();
+const getColor = () => {
+    let r = Math.floor(Math.random()*256);
+    let g = Math.floor(Math.random()*256);
+    let b = Math.floor(Math.random()*256);
+    return `rgb(${r}, ${g}, ${b})`;
+}
+
+const getRandomColors = (cardNum) => {
+    let colors = [];
+    for(let i=0; i<cardNum; i++){
+        colors.push(getColor())
+    }
+    return colors;
+}
+
+const getAnswerColor = (colors) => {
+    return colors[Math.floor(Math.random()*colors.length)];
 }
