@@ -22,7 +22,9 @@ class ColorGame {
         this.navItems = document.querySelectorAll('.nav-item');
         this.countDownText = document.querySelector('#countdown');
         this.brand = document.querySelector('.navbar-brand');
-
+        this.navBtn = document.querySelector('.navbar-toggler');
+        this.navbarContent = document.querySelector('#navbarSupportedContent');
+        
         this.addClickEventToCards();
         this.addClickEventToResetBtn();
         this.addClickEventToNavItmes();
@@ -71,6 +73,8 @@ class ColorGame {
                 item.classList.add('active');
                 this.gameMode = item.querySelector('a').innerHTML.toLowerCase();
                 this.init();
+                this.navBtn.classList.toggle('collapsed');
+                this.navbarContent.classList.toggle('show');
             });
         })
     }
