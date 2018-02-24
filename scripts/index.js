@@ -20,18 +20,36 @@ const getAnswerColor = (colors) => {
 class ColorGame {
     constructor() {
         this.gameOver = false;
-        this.title = document.querySelector('.color-picked');
-        this.cards = document.querySelectorAll('.card');
-        this.cardNum = this.cards.length;
-        this.message = document.querySelector('.message');
-        this.body = document.querySelector('body');
-        this.resetBtn = document.querySelector('.reset');
-        this.resetText = document.querySelector('.reset-text');
+        this.gameMode = 'easy';
         this.answerColor = '';
         this.colors = [];
+        this.setGameMode();
+        
+        this.body = document.querySelector('body');
+        this.title = document.querySelector('.color-picked');
+        this.message = document.querySelector('.message');
+        this.cards = document.querySelectorAll('.card');
+        this.resetBtn = document.querySelector('.reset');
+        this.resetText = document.querySelector('.reset-text');
+        this.navItems = document.querySelectorAll('.nav-item');
 
         this.addClickEventToCards();
         this.addClickEventToResetBtn();
+        this.addClickEventToNavItmes();
+    }
+
+    setGameMode(){
+        switch(this.gameMode){
+            case 'easy':
+                this.cardNum=3;
+                break;
+            case 'hard':
+                this.cardNum=6;
+                break;
+            case 'nightmare':
+                this.cardNum=6;
+                break;
+        }
     }
 
     setTitle(){
@@ -74,9 +92,14 @@ class ColorGame {
             });
         } else {
             this.cards.forEach((card, i)=>{
-                card.style.backgroundColor = this.colors[i];
-                card.style.opacity = 1;
-                card.style.cursor = 'pointer';
+                if(this.colors[i]){
+                    card.style.display = 'block';
+                    card.style.backgroundColor = this.colors[i];
+                    card.style.opacity = 1;
+                    card.style.cursor = 'pointer';
+                } else {
+                    card.style.display = 'none';
+                }
             });   
         }
     }
@@ -118,6 +141,7 @@ class ColorGame {
     }
 
     init(){
+        this.setGameMode();
         this.colors = getRandomColors(this.cardNum);
         this.answerColor = getAnswerColor(this.colors);
         this.setTitle();
@@ -130,6 +154,26 @@ class ColorGame {
     reset(){
         this.gameOver = false;
         this.init();
+    }
+
+    removeActiveClassFromNavItems(){
+        this.navItems.forEach(item=>{
+            item.classList.remove('active');
+        });
+    }
+    
+    addClickEventToNavItmes(){
+        this.navItems.forEach(item=>{
+            item.addEventListener('click', ()=>{
+                this.removeActiveClassFromNavItems();
+                item.classList.add('active');
+                let selectedMode = item.querySelector('a').innerHTML.toLowerCase();
+                if(selectedMode !== this.gameMode){
+                    this.gameMode = selectedMode;
+                    this.init();
+                }
+            });
+        })
     }
 }
 
